@@ -1,0 +1,6 @@
+{
+  "name": "PaisaLens",
+  "description": "Smart Personal Finance & Micro-Expense OCR Tracker. Turn receipts into smart expenses and uncover how small daily spending adds up.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
