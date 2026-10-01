@@ -20,6 +20,7 @@ import { CategoryType, OCRScanResult, PaymentMethod, SampleReceiptPreset, Transa
 import { SAMPLE_RECEIPTS } from '../data/mockData';
 import { processReceipt, ScanProgressUpdate } from '../services/ocrService';
 import { ThermalReceiptGraphic } from './ThermalReceiptGraphic';
+import { CameraCaptureModal } from './CameraCaptureModal';
 
 interface ScanReceiptViewProps {
   onAddTransaction: (transaction: Omit<Transaction, 'id'>) => void;
@@ -40,6 +41,7 @@ export const ScanReceiptView: React.FC<ScanReceiptViewProps> = ({
   const [extractedData, setExtractedData] = useState<OCRScanResult | null>(null);
   const [customImagePreview, setCustomImagePreview] = useState<string | null>(null);
   const [addedSuccess, setAddedSuccess] = useState<boolean>(false);
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState<boolean>(false);
 
   // Editable fields in extracted data
   const [editMerchant, setEditMerchant] = useState<string>('');
@@ -223,9 +225,9 @@ export const ScanReceiptView: React.FC<ScanReceiptViewProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  cameraInputRef.current?.click();
+                  setIsCameraModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
               >
                 <Camera className="h-3.5 w-3.5 text-emerald-700" />
                 <span>Take Photo</span>
@@ -237,7 +239,7 @@ export const ScanReceiptView: React.FC<ScanReceiptViewProps> = ({
                   e.stopPropagation();
                   fileInputRef.current?.click();
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-emerald-800"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-2xs hover:bg-emerald-800 transition-colors"
               >
                 <span>Select File</span>
               </button>
@@ -570,6 +572,17 @@ export const ScanReceiptView: React.FC<ScanReceiptViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Live Camera Viewfinder Modal */}
+      <CameraCaptureModal
+        isOpen={isCameraModalOpen}
+        onClose={() => setIsCameraModalOpen(false)}
+        onCapture={(file) => {
+          const previewUrl = URL.createObjectURL(file);
+          setCustomImagePreview(previewUrl);
+          handleRunOCR(file);
+        }}
+      />
     </div>
   );
 };
